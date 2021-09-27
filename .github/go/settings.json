@@ -3,7 +3,9 @@
     "country":  "us",
     "VersioningStrategy":  2,
     "KeyVaultName":  "",
-    "AppSourceCopMandatoryAffixes": "BingMaps",
+    "AppSourceCopMandatoryAffixes":  [
+                                          "BingMaps"
+                                     ],
     "appFolders":  [
                        "BingMaps.AppSource"
                    ],
