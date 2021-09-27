@@ -2,7 +2,8 @@
     "type":  "AppSource App",
     "country":  "us",
     "VersioningStrategy":  2,
-    "KeyVaultName":  "",
+    "KeyVaultName":  "BuildVariables",
+    "LicenseFileUrlSecretName": "LicenseFile",
     "AppSourceCopMandatoryAffixes":  [
                                           "BingMaps"
                                      ],
