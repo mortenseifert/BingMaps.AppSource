@@ -1,10 +1,12 @@
 {
-    "type": "AppSource App",
-    "country": "us",
-    "VersioningStrategy": 2,
-    "KeyVaultName": "",
-    "appFolders": [
-    ],
-    "testFolders": [
-    ]
+    "type":  "AppSource App",
+    "country":  "us",
+    "VersioningStrategy":  2,
+    "KeyVaultName":  "",
+    "appFolders":  [
+                       "BingMaps.AppSource"
+                   ],
+    "testFolders":  [
+                        "BingMaps.AppSource_Test"
+                    ]
 }

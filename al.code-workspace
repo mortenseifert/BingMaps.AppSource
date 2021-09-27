@@ -2,6 +2,12 @@
     "folders":  [
                     {
                         "path":  ".github\\go"
+                    },
+                    {
+                        "path":  "BingMaps.AppSource"
+                    },
+                    {
+                        "path":  "BingMaps.AppSource_Test"
                     }
                 ],
     "settings":  {
