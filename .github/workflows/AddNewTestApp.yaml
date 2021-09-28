@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Add new test app
-        uses: freddydk/ghgo/AddAnApp@main
+        uses: freddydk/myghgo/AddAnApp@main
         with:
           type: 'Test App'
           publisher: ${{ github.event.inputs.publisher }}
