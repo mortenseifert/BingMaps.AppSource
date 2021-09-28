@@ -5,6 +5,11 @@
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName": "LicenseFile",
     "templateUrl": "https://github.com/freddydk/myASA",
+    "KeyVaultCertificateUrlSecretName": "KeyVaultCertificateFile",
+    "KeyVaultCertificatePasswordSecretName": "KeyVaultCertificatePassword",
+    "KeyVaultClientIdSecretName": "KeyVaultClientId",
+    "CodeSignCertificateUrlSecretName": "CodeSignCertificateUrl",
+    "CodeSignCertificatePasswordSecretName": "CodeSignCertificatePassword",
     "AppSourceCopMandatoryAffixes":  [
                                           "BingMaps"
                                      ],
