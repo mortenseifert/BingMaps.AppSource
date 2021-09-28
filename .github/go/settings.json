@@ -4,6 +4,7 @@
     "VersioningStrategy":  2,
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName": "LicenseFile",
+    "templateUrl": "https://github.com/freddydk/myASA",
     "AppSourceCopMandatoryAffixes":  [
                                           "BingMaps"
                                      ],
