@@ -1,7 +1,7 @@
 $gitHubGoHelperPath = "$([System.IO.Path]::GetTempFileName()).ps1"
 $webClient = New-Object System.Net.WebClient
 $webClient.CachePolicy = New-Object System.Net.Cache.RequestCachePolicy -argumentList ([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore)
-$webClient.DownloadFile('https://raw.githubusercontent.com/freddydk/ghgo/main/GitHub-Go-Helper.ps1', $gitHubGoHelperPath)
+$webClient.DownloadFile('https://raw.githubusercontent.com/freddydk/myghgo/main/GitHub-Go-Helper.ps1', $gitHubGoHelperPath)
 . $gitHubGoHelperPath -local
 
 $environmentName = Enter-Value `
