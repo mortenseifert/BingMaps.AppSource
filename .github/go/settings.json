@@ -4,7 +4,6 @@
     "VersioningStrategy":  2,
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName": "LicenseFile",
-    "templateUrl": "https://github.com/freddydk/myASA",
     "KeyVaultCertificateUrlSecretName": "KeyVaultCertificateFile",
     "KeyVaultCertificatePasswordSecretName": "KeyVaultCertificatePassword",
     "KeyVaultClientIdSecretName": "KeyVaultClientId",
