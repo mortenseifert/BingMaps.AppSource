@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    runs-on: {{ inputs.runson }}
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
