@@ -11,6 +11,9 @@ on:
         required: false
         type: string
         default: 'windows-latest'
+      githubsecrets:
+        required: true
+        type: string
 
 jobs:
   build:
