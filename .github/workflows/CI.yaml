@@ -15,9 +15,12 @@ on:
 
 jobs:
   build:
+    env:
+      githubsecrets: ${{ tojson(secrets) }}
+
     name: build
     uses: freddydk/App3/.github/workflows/build.yaml@main
     with:
-      githubsecrets: ${{ tojson(secrets) }}
+      githubsecrets: ${{ env.githubsecrets }}
 
 
