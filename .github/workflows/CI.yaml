@@ -19,11 +19,4 @@ jobs:
     with:
       githubsecrets: ${{ tojson(secrets) }}
 
-  cleanup:
-    runs-on: windows-latest
-
-    steps:
-      - name: Cleanup
-        if: always()
-        uses: freddydk/myghgo/PipelineCleanup@main
 
