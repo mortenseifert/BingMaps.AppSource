@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yaml@main
+    uses: freddydk/App3/.github/workflows/build.yaml@main
 
   cleanup:
     runs-on: windows-latest
