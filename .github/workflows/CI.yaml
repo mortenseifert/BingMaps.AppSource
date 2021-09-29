@@ -51,6 +51,8 @@ jobs:
           KeyVaultCertificateUrl: ${{ env.KeyVaultCertificateUrl }}
           KeyVaultCertificatePw: ${{ env.KeyVaultCertificatePassword }}
           KeyVaultClientId: ${{ env.KeyVaultClientId }}
+          appBuild: ${{ env.appBuild }}
+          appRevision: ${{ env.appRevision }}
 
       - name: Publish test results
         if: success() || failure()

@@ -32,7 +32,7 @@ jobs:
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
         with:
-          get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,LicenseFileUrlSecretName,InsiderSasTokenSecretName
+          get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
 
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
@@ -40,13 +40,18 @@ jobs:
           secrets: ${{ toJson(secrets) }}
         with:
           keyVaultName: ${{ env.KEYVAULTNAME }}
-          secrets: 'licenseFileUrl=${{ env.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{ env.INSIDERSASTOKENSECRETNAME }}'
+          secrets: 'licenseFileUrl=${{ env.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{ env.INSIDERSASTOKENSECRETNAME }},CodeSignCertificateUrl=${{ env.CodeSignCertificateUrlSecretName }},CodeSignCertificatePassword=${{ env.CodeSignCertificatePasswordSecretName }},KeyVaultCertificateUrl=${{ env.KeyVaultCertificateUrlSecretName }},KeyVaultCertificatePassword=${{ env.KeyVaultCertificatePasswordSecretName }},KeyVaultClientId=${{ env.KeyVaultClientIdSecretName }}'
 
       - name: Run pipeline
         uses: freddydk/myghgo/RunPipeline@main
         with:
           insiderSasToken: ${{ env.InsiderSasToken }}
           licenseFileUrl: ${{ env.LicenseFileUrl }}
+          CodeSignCertificateUrl: ${{ env.CodeSignCertificateUrl }}
+          CodeSignCertificatePw: ${{ env.CodeSignCertificatePassword }}
+          KeyVaultCertificateUrl: ${{ env.KeyVaultCertificateUrl }}
+          KeyVaultCertificatePw: ${{ env.KeyVaultCertificatePassword }}
+          KeyVaultClientId: ${{ env.KeyVaultClientId }}
           appBuild: ${{ env.appBuild }}
           appRevision: ${{ env.appRevision }}
 
