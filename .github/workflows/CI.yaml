@@ -17,10 +17,10 @@ jobs:
   build:
     env:
       githubsecrets: ${{ tojson(secrets) }}
-
-    name: build
-    uses: freddydk/App3/.github/workflows/build.yaml@main
-    with:
-      githubsecrets: ${{ env.githubsecrets }}
+    steps:
+    - name: build
+      uses: freddydk/App3/.github/workflows/build.yaml@main
+      with:
+        githubsecrets: ${{ env.githubsecrets }}
 
 
