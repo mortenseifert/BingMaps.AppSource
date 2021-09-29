@@ -2,6 +2,7 @@
     "type":  "AppSource App",
     "country":  "us",
     "VersioningStrategy":  2,
+    "templateUrl":  "https://github.com/freddydk/myASA",
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName": "LicenseFile",
     "KeyVaultCertificateUrlSecretName": "KeyVaultCertificateFile",
