@@ -33,6 +33,8 @@ jobs:
 
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
+        env:
+          secrets: ${{ tojson(inputs.secrets) }}
         with:
           keyVaultName: ${{ env.KEYVAULTNAME }}
           secrets: 'licenseFileUrl=${{ env.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{ env.INSIDERSASTOKENSECRETNAME }},CodeSignCertificateUrl=${{ env.CodeSignCertificateUrlSecretName }},CodeSignCertificatePassword=${{ env.CodeSignCertificatePasswordSecretName }},KeyVaultCertificateUrl=${{ env.KeyVaultCertificateUrlSecretName }},KeyVaultCertificatePassword=${{ env.KeyVaultCertificatePasswordSecretName }},KeyVaultClientId=${{ env.KeyVaultClientIdSecretName }}'

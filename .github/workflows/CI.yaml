@@ -16,8 +16,8 @@ on:
 jobs:
   build:
     uses: freddydk/App3/.github/workflows/build.yaml@main
-    with:
-      secrets: ${{ toJson(secrets) }}
+    secrets:
+      secrets: ${{ secrets }}
 
   cleanup:
     runs-on: windows-latest
