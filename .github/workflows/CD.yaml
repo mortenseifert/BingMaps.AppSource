@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Deploy
-        uses: freddydk/ghgo/Deploy@main
+        uses: freddydk/myghgo/Deploy@main
         env:
           secrets: ${{ toJson(secrets) }}
         with:
