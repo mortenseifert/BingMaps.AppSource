@@ -39,5 +39,5 @@ jobs:
           token: ${{ env.ghTokenWorkflow }}
           update: Y
           templateUrl: ${{ env.TemplateUrl }}
-          branch: ${{ env.TemplateBranch }}
+          templateBranch: ${{ env.TemplateBranch }}
           directCommit: ${{ github.event.inputs.directCommit }}
