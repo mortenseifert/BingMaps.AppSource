@@ -70,7 +70,7 @@ jobs:
 
   RunPipeline:
     runs-on: windows-latest
-    needs: readsecrets
+    needs: [ readsettings, readsecrets ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -78,15 +78,15 @@ jobs:
       - name: Run pipeline
         uses: freddydk/myghgo/RunPipeline@main
         with:
-          insiderSasToken: ${{ env.InsiderSasToken }}
-          licenseFileUrl: ${{ env.LicenseFileUrl }}
-          CodeSignCertificateUrl: ${{ env.CodeSignCertificateUrl }}
-          CodeSignCertificatePw: ${{ env.CodeSignCertificatePassword }}
-          KeyVaultCertificateUrl: ${{ env.KeyVaultCertificateUrl }}
-          KeyVaultCertificatePw: ${{ env.KeyVaultCertificatePassword }}
-          KeyVaultClientId: ${{ env.KeyVaultClientId }}
-          appBuild: ${{ env.appBuild }}
-          appRevision: ${{ env.appRevision }}
+          insiderSasToken: ${{needs.readsecrets.outputs.InsiderSasToken }}
+          licenseFileUrl: ${{needs.readsecrets.outputs.LicenseFileUrl }}
+          CodeSignCertificateUrl: ${{needs.readsecrets.outputs.CodeSignCertificateUrl }}
+          CodeSignCertificatePw: ${{needs.readsecrets.outputs.CodeSignCertificatePassword }}
+          KeyVaultCertificateUrl: ${{needs.readsecrets.outputs.KeyVaultCertificateUrl }}
+          KeyVaultCertificatePw: ${{needs.readsecrets.outputs.KeyVaultCertificatePassword }}
+          KeyVaultClientId: ${{needs.readsecrets.outputs.KeyVaultClientId }}
+          appBuild: ${{needs.readsettings.outputs.appBuild }}
+          appRevision: ${{needs.readsettings.outputs.appRevision }}
 
       - name: Publish test results
         if: success() || failure()
@@ -98,14 +98,14 @@ jobs:
       - name: Publish artifacts - apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{ env.repoName}}-Apps-${{ env.repoVersion}}.${{ env.appBuild}}.${{ env.appRevision}}'
+          name: '${{needs.readsettings.outputs.repoName}}-Apps-${{needs.readsettings.outputs.repoVersion}}.${{needs.readsettings.outputs.appBuild}}.${{needs.readsettings.outputs.appRevision}}'
           path: output/Apps/
           if-no-files-found: ignore
 
       - name: Publish artifacts - test apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{ env.repoName}}-TestApps-${{ env.repoVersion}}.${{ env.appBuild}}.${{ env.appRevision}}'
+          name: '${{needs.readsettings.outputs.repoName}}-TestApps-${{needs.readsettings.outputs.repoVersion}}.${{needs.readsettings.outputs.appBuild}}.${{needs.readsettings.outputs.appRevision}}'
           path: output/TestApps/
           if-no-files-found: ignore
 
