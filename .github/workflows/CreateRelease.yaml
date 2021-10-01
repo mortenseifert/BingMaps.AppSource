@@ -26,13 +26,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Check for updates to GitHub-Go system files
-        uses: freddydk/myghgo/CheckForUpdates@main
-
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
         with:
-          get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
+          get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
+
+      - name: Check for updates to GitHub-Go system files
+        uses: freddydk/myghgo/CheckForUpdates@main
+        with:
+          templateUrl: ${{ env.TemplateUrl }}
+          templateBranch: ${{ env.TemplateBranch }}
 
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
