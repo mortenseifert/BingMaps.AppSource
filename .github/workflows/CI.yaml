@@ -18,32 +18,62 @@ defaults:
     shell: PowerShell
 
 jobs:
-  readsettings:
+  ReadSettings:
     runs-on: windows-latest
+    outputs:
+      RepoVersion: ${{steps.readsettings.outputs.RepoVersion}}
+      RepoName: ${{steps.readsettings.outputs.RepoName}}
+      AppBuild: ${{steps.readsettings.outputs.AppBuild}}
+      AppRevision: ${{steps.readsettings.outputs.AppRevision}}
+      KeyVaultName: ${{steps.readsettings.outputs.KeyVaultName}}
+      TemplateUrl: ${{steps.readsettings.outputs.TemplateUrl}}
+      TemplateBranch: ${{steps.readsettings.outputs.TemplateBranch}}
+      LicenseFileUrlSecretName: ${{steps.readsettings.outputs.LicenseFileUrlSecretName}}
+      InsiderSasTokenSecretName: ${{steps.readsettings.outputs.InsiderSasTokenSecretName}}
+      CodeSignCertificateUrlSecretName: ${{steps.readsettings.outputs.CodeSignCertificateUrlSecretName}}
+      CodeSignCertificatePasswordSecretName: ${{steps.readsettings.outputs.CodeSignCertificatePasswordSecretName}}
+      KeyVaultCertificateUrlSecretName: ${{steps.readsettings.outputs.KeyVaultCertificateUrlSecretName}}
+      KeyVaultCertificatePasswordSecretName: ${{steps.readsettings.outputs.KeyVaultCertificatePasswordSecretName}}
+      KeyVaultClientIdSecretName: ${{steps.readsettings.outputs.KeyVaultClientIdSecretName}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
+        id: readsettings
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
-  rest:
+  CheckForUpdates:
     runs-on: windows-latest
+    needs: readsettings
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Check for updates to GitHub-Go system files
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
-          templateUrl: ${{ env.TemplateUrl }}
-          templateBranch: ${{ env.TemplateBranch }}
-
+          templateUrl: ${{needs.readsettings.outputs.TemplateUrl}}
+          templateBranch: ${{needs.readsettings.outputs.TemplateBranch}}
+  ReadSecrets:
+    runs-on: windows-latest
+    needs: readsettings
+    steps:
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
         env:
           secrets: ${{ toJson(secrets) }}
         with:
-          keyVaultName: ${{ env.KEYVAULTNAME }}
-          secrets: 'licenseFileUrl=${{ env.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{ env.INSIDERSASTOKENSECRETNAME }},CodeSignCertificateUrl=${{ env.CodeSignCertificateUrlSecretName }},CodeSignCertificatePassword=${{ env.CodeSignCertificatePasswordSecretName }},KeyVaultCertificateUrl=${{ env.KeyVaultCertificateUrlSecretName }},KeyVaultCertificatePassword=${{ env.KeyVaultCertificatePasswordSecretName }},KeyVaultClientId=${{ env.KeyVaultClientIdSecretName }}'
+          keyVaultName: ${{needs.readsettings.outputs.KEYVAULTNAME}}
+          secrets: 'licenseFileUrl=${{needs.readsettings.outputs.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{needs.readsettings.outputs.INSIDERSASTOKENSECRETNAME}},CodeSignCertificateUrl=${{needs.readsettings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.readsettings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.readsettings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.readsettings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.readsettings.outputs.KeyVaultClientIdSecretName}}'
+
+  RunPipeline:
+    runs-on: windows-latest
+    needs: readsecrets
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Run pipeline
         uses: freddydk/myghgo/RunPipeline@main
