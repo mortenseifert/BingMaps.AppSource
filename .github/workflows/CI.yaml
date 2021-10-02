@@ -35,15 +35,23 @@ jobs:
       KeyVaultCertificateUrlSecretName: ${{steps.readsettings.outputs.KeyVaultCertificateUrlSecretName}}
       KeyVaultCertificatePasswordSecretName: ${{steps.readsettings.outputs.KeyVaultCertificatePasswordSecretName}}
       KeyVaultClientIdSecretName: ${{steps.readsettings.outputs.KeyVaultClientIdSecretName}}
+      MyTest: ${{steps.extra.outputs.MyTest}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Read settings
-        uses: freddydk/myghgo/ReadSettings@main
         id: readsettings
+        uses: freddydk/myghgo/ReadSettings@main
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
+
+      - name: Extra
+        id: extra
+        run: |
+          Write-Host "::set-output name=MyTest::MyTest"
+
+        
   SeeOutput:
     runs-on: windows-latest
     needs: Settings
@@ -51,6 +59,7 @@ jobs:
     - name: Output
       run: |
         Write-Host "${{ needs.Settings.outputs.RepoVersion }}"
+        Write-Host "${{ needs.Settings.outputs.MyTest }}"
   CheckForUpdates:
     runs-on: windows-latest
     needs: Settings
