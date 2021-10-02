@@ -66,7 +66,7 @@ jobs:
           secrets: ${{ toJson(secrets) }}
         with:
           keyVaultName: ${{needs.readsettings.outputs.KEYVAULTNAME}}
-          secrets: 'licenseFileUrl=${{needs.readsettings.outputs.LICENSEFILEURLSECRETNAME }},insiderSasToken=${{needs.readsettings.outputs.INSIDERSASTOKENSECRETNAME}},CodeSignCertificateUrl=${{needs.readsettings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.readsettings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.readsettings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.readsettings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.readsettings.outputs.KeyVaultClientIdSecretName}}'
+          secrets: 'licenseFileUrl=${{needs.readsettings.outputs.LicenseFileUrlSecretName}},insiderSasToken=${{needs.readsettings.outputs.InsiderSasTokenSecretName}},CodeSignCertificateUrl=${{needs.readsettings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.readsettings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.readsettings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.readsettings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.readsettings.outputs.KeyVaultClientIdSecretName}}'
 
   RunPipeline:
     runs-on: windows-latest
