@@ -44,6 +44,13 @@ jobs:
         id: readsettings
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
+  SeeOutput:
+    runs-on: windows-latest
+    needs: Settings
+    steps:
+    - name: Output
+      run: |
+        Write-Host "${{ needs.Settings.outputs.RepoVersion }}"
   CheckForUpdates:
     runs-on: windows-latest
     needs: Settings
@@ -63,7 +70,7 @@ jobs:
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
         env:
-          secrets: ${{ toJson(secrets) }}
+          secrets: ${{toJson(secrets)}}
         with:
           keyVaultName: ${{needs.Settings.outputs.KEYVAULTNAME}}
           secrets: 'licenseFileUrl=${{needs.Settings.outputs.LicenseFileUrlSecretName}},insiderSasToken=${{needs.Settings.outputs.InsiderSasTokenSecretName}},CodeSignCertificateUrl=${{needs.Settings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.Settings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.Settings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.Settings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.Settings.outputs.KeyVaultClientIdSecretName}}'
