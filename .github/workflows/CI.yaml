@@ -21,34 +21,38 @@ jobs:
   Settings:
     runs-on: windows-latest
     outputs:
-      RepoVersion: ${{steps.readsettings.outputs.RepoVersion}}
-      RepoName: ${{steps.readsettings.outputs.RepoName}}
-      AppBuild: ${{steps.readsettings.outputs.AppBuild}}
-      AppRevision: ${{steps.readsettings.outputs.AppRevision}}
-      KeyVaultName: ${{steps.readsettings.outputs.KeyVaultName}}
-      TemplateUrl: ${{steps.readsettings.outputs.TemplateUrl}}
-      TemplateBranch: ${{steps.readsettings.outputs.TemplateBranch}}
-      LicenseFileUrlSecretName: ${{steps.readsettings.outputs.LicenseFileUrlSecretName}}
-      InsiderSasTokenSecretName: ${{steps.readsettings.outputs.InsiderSasTokenSecretName}}
-      CodeSignCertificateUrlSecretName: ${{steps.readsettings.outputs.CodeSignCertificateUrlSecretName}}
-      CodeSignCertificatePasswordSecretName: ${{steps.readsettings.outputs.CodeSignCertificatePasswordSecretName}}
-      KeyVaultCertificateUrlSecretName: ${{steps.readsettings.outputs.KeyVaultCertificateUrlSecretName}}
-      KeyVaultCertificatePasswordSecretName: ${{steps.readsettings.outputs.KeyVaultCertificatePasswordSecretName}}
-      KeyVaultClientIdSecretName: ${{steps.readsettings.outputs.KeyVaultClientIdSecretName}}
-      MyTest: ${{steps.extra.outputs.MyTest}}
+      RepoVersion: ${{steps.settings.outputs.RepoVersion}}
+      RepoName: ${{steps.settings.outputs.RepoName}}
+      AppBuild: ${{steps.settings.outputs.AppBuild}}
+      AppRevision: ${{steps.settings.outputs.AppRevision}}
+      KeyVaultName: ${{steps.settings.outputs.KeyVaultName}}
+      TemplateUrl: ${{steps.settings.outputs.TemplateUrl}}
+      TemplateBranch: ${{steps.settings.outputs.TemplateBranch}}
+      LicenseFileUrlSecretName: ${{steps.settings.outputs.LicenseFileUrlSecretName}}
+      InsiderSasTokenSecretName: ${{steps.settings.outputs.InsiderSasTokenSecretName}}
+      CodeSignCertificateUrlSecretName: ${{steps.settings.outputs.CodeSignCertificateUrlSecretName}}
+      CodeSignCertificatePasswordSecretName: ${{steps.settings.outputs.CodeSignCertificatePasswordSecretName}}
+      KeyVaultCertificateUrlSecretName: ${{steps.settings.outputs.KeyVaultCertificateUrlSecretName}}
+      KeyVaultCertificatePasswordSecretName: ${{steps.settings.outputs.KeyVaultCertificatePasswordSecretName}}
+      KeyVaultClientIdSecretName: ${{steps.settings.outputs.KeyVaultClientIdSecretName}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Read settings
-        id: readsettings
         uses: freddydk/myghgo/ReadSettings@main
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
 
-      - name: Extra
-        id: extra
+      - name: Output
+        id: settings
         run: |
+          "RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName".Split(',') | % {
+            Write-Host "set-Output nname=$($_)::$($ENV:$_)"
+            Write-Host "set-Output nname=$($_)::$($ENV:"$_")"
+            Write-Host "::set-Output nname=$($_)::$($ENV:$_)"
+          }
+
           Write-Host "::set-output name=MyTest::MyTest"
 
         
