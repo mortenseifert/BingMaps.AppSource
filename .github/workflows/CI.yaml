@@ -18,7 +18,7 @@ defaults:
     shell: PowerShell
 
 jobs:
-  ReadSettings:
+  Settings:
     runs-on: windows-latest
     outputs:
       RepoVersion: ${{steps.readsettings.outputs.RepoVersion}}
@@ -46,7 +46,7 @@ jobs:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
   CheckForUpdates:
     runs-on: windows-latest
-    needs: readsettings
+    needs: Settings
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,23 +54,23 @@ jobs:
       - name: Check for updates to GitHub-Go system files
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
-          templateUrl: ${{needs.readsettings.outputs.TemplateUrl}}
-          templateBranch: ${{needs.readsettings.outputs.TemplateBranch}}
+          templateUrl: ${{needs.Settings.outputs.TemplateUrl}}
+          templateBranch: ${{needs.Settings.outputs.TemplateBranch}}
   ReadSecrets:
     runs-on: windows-latest
-    needs: readsettings
+    needs: Settings
     steps:
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
         env:
           secrets: ${{ toJson(secrets) }}
         with:
-          keyVaultName: ${{needs.readsettings.outputs.KEYVAULTNAME}}
-          secrets: 'licenseFileUrl=${{needs.readsettings.outputs.LicenseFileUrlSecretName}},insiderSasToken=${{needs.readsettings.outputs.InsiderSasTokenSecretName}},CodeSignCertificateUrl=${{needs.readsettings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.readsettings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.readsettings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.readsettings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.readsettings.outputs.KeyVaultClientIdSecretName}}'
+          keyVaultName: ${{needs.Settings.outputs.KEYVAULTNAME}}
+          secrets: 'licenseFileUrl=${{needs.Settings.outputs.LicenseFileUrlSecretName}},insiderSasToken=${{needs.Settings.outputs.InsiderSasTokenSecretName}},CodeSignCertificateUrl=${{needs.Settings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.Settings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.Settings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.Settings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.Settings.outputs.KeyVaultClientIdSecretName}}'
 
   RunPipeline:
     runs-on: windows-latest
-    needs: [ readsettings, readsecrets ]
+    needs: [ Settings, readsecrets ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -85,8 +85,8 @@ jobs:
           KeyVaultCertificateUrl: ${{needs.readsecrets.outputs.KeyVaultCertificateUrl }}
           KeyVaultCertificatePw: ${{needs.readsecrets.outputs.KeyVaultCertificatePassword }}
           KeyVaultClientId: ${{needs.readsecrets.outputs.KeyVaultClientId }}
-          appBuild: ${{needs.readsettings.outputs.appBuild }}
-          appRevision: ${{needs.readsettings.outputs.appRevision }}
+          appBuild: ${{needs.Settings.outputs.appBuild }}
+          appRevision: ${{needs.Settings.outputs.appRevision }}
 
       - name: Publish test results
         if: success() || failure()
@@ -98,14 +98,14 @@ jobs:
       - name: Publish artifacts - apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{needs.readsettings.outputs.repoName}}-Apps-${{needs.readsettings.outputs.repoVersion}}.${{needs.readsettings.outputs.appBuild}}.${{needs.readsettings.outputs.appRevision}}'
+          name: '${{needs.Settings.outputs.repoName}}-Apps-${{needs.Settings.outputs.repoVersion}}.${{needs.Settings.outputs.appBuild}}.${{needs.Settings.outputs.appRevision}}'
           path: output/Apps/
           if-no-files-found: ignore
 
       - name: Publish artifacts - test apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{needs.readsettings.outputs.repoName}}-TestApps-${{needs.readsettings.outputs.repoVersion}}.${{needs.readsettings.outputs.appBuild}}.${{needs.readsettings.outputs.appRevision}}'
+          name: '${{needs.Settings.outputs.repoName}}-TestApps-${{needs.Settings.outputs.repoVersion}}.${{needs.Settings.outputs.appBuild}}.${{needs.Settings.outputs.appRevision}}'
           path: output/TestApps/
           if-no-files-found: ignore
 
