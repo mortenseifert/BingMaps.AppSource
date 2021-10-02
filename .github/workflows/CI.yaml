@@ -47,10 +47,11 @@ jobs:
       - name: Output
         id: settings
         run: |
-          Write-Host "::set-output name=RepoVersion::$($env:RepoVersion)"
           "RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName".Split(',') | % {
-            Write-Host "set-Output name=$($_)::$($env:$_)"
-            Write-Host "::set-Output name=$($_)::$($env:$_)"
+            $envvar = $_
+            $value = (Get-ChildItem -Path env: | ? { $_.Name -eq $envvar }).value
+            Write-Host "set-Output name=$($_)::$value"
+            Write-Host "::set-Output name=$($_)::$value"
           }
         
   SeeOutput:
