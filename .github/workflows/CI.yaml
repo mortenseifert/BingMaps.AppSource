@@ -48,9 +48,9 @@ jobs:
         id: settings
         run: |
           "RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName".Split(',') | % {
-            Write-Host "set-Output nname=$($_)::$(env.$_)"
-            Write-Host "set-Output nname=$($_)::$(env."$_")"
-            Write-Host "::set-Output nname=$($_)::$(env.$_)"
+            Write-Host "set-Output nname=$($_)::$($env.$_)"
+            Write-Host "set-Output nname=$($_)::$($env."$_")"
+            Write-Host "::set-Output nname=$($_)::$($env.$_)"
           }
 
           Write-Host "::set-output name=MyTest::MyTest"
