@@ -43,6 +43,10 @@ jobs:
   Build:
     runs-on: windows-latest
     needs: Settings
+    outputs:
+      AppsArtifactName: ${{steps.calculateArtifactNames.outputs.AppsArtifactName}}
+      TestAppsArtifactName: ${{steps.calculateArtifactNames.outputs.TestAppsArtifactName}}
+      TestResultsArtifactName: ${{steps.calculateArtifactNames.outputs.TestResultsArtifactName}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -67,18 +71,31 @@ jobs:
         with:
           report_paths: 'TestResults*.xml'
           github_token: ${{ github.token }}
-          
+
+      - name: Calculate Artifact names
+        id: calculateArtifactNames
+        run: |
+          $settings = '${{ needs.Settings.outputs.Settings }}' | ConvertFrom-Json
+          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)'
+          $testAppsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)'
+          $testResultsArtifactName = "TestResults"
+          'appsArtifactsName','testAppsArtifactsName','testResultsArtifactName' | ForEach-Object {
+            $value = (Get-Variable -Name $_).Value
+            Write-Host "::set-output name=$_::$value"
+            Add-Content -Path $env:GITHUB_ENV -Value "$_=$value"
+          }
+
       - name: Publish artifacts - apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{needs.Settings.outputs.repoName}}-Apps-${{needs.Settings.outputs.repoVersion}}.${{needs.Settings.outputs.appBuild}}.${{needs.Settings.outputs.appRevision}}'
+          name: ${{env.appsArtifactsName}}
           path: output/Apps/
           if-no-files-found: ignore
 
       - name: Publish artifacts - test apps
         uses: actions/upload-artifact@v2
         with:
-          name: '${{needs.Settings.outputs.repoName}}-TestApps-${{needs.Settings.outputs.repoVersion}}.${{needs.Settings.outputs.appBuild}}.${{needs.Settings.outputs.appRevision}}'
+          name: ${{env.testAppsArtifactsName}}
           path: output/TestApps/
           if-no-files-found: ignore
 
@@ -86,10 +103,27 @@ jobs:
         uses: actions/upload-artifact@v2
         if: success() || failure()
         with:
-          name: testresults
+          name: ${{env.testResultsArtifactsName}}
           path: TestResults.xml
           if-no-files-found: ignore
 
       - name: Cleanup
         if: always()
         uses: freddydk/myghgo/PipelineCleanup@main
+  Deploy:
+    runs-on: windows-latest
+    needs: Build
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{needs.Build.Output.AppsArtifactsName}}
+
+      - name: Deploy
+        uses: freddydk/myghgo/Deploy@main
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          workflow: ${{ env.GITHUB_WORKFLOW }}
+          artifactsUrl: ${{needs.Build.Output.AppsArtifactsName}}
+
