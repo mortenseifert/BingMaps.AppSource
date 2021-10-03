@@ -50,7 +50,7 @@ jobs:
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
           settings: ${{needs.Settings.outputs.Settings}}
-  ReadSecrets:
+  Secrets:
     runs-on: windows-latest
     needs: Settings
     steps:
@@ -63,7 +63,7 @@ jobs:
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
   RunPipeline:
     runs-on: windows-latest
-    needs: [ Settings, readsecrets ]
+    needs: [ Settings, Secrets ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -71,15 +71,8 @@ jobs:
       - name: Run pipeline
         uses: freddydk/myghgo/RunPipeline@main
         with:
-          insiderSasToken: ${{needs.readsecrets.outputs.InsiderSasToken }}
-          licenseFileUrl: ${{needs.readsecrets.outputs.LicenseFileUrl }}
-          CodeSignCertificateUrl: ${{needs.readsecrets.outputs.CodeSignCertificateUrl }}
-          CodeSignCertificatePw: ${{needs.readsecrets.outputs.CodeSignCertificatePassword }}
-          KeyVaultCertificateUrl: ${{needs.readsecrets.outputs.KeyVaultCertificateUrl }}
-          KeyVaultCertificatePw: ${{needs.readsecrets.outputs.KeyVaultCertificatePassword }}
-          KeyVaultClientId: ${{needs.readsecrets.outputs.KeyVaultClientId }}
-          appBuild: ${{needs.Settings.outputs.appBuild }}
-          appRevision: ${{needs.Settings.outputs.appRevision }}
+          Settings: ${{needs.Settings.outputs.Settings }}
+          Secrets: ${{needs.Secrets.outputs.Secrets }}
 
       - name: Publish test results
         if: success() || failure()
