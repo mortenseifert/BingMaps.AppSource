@@ -44,7 +44,7 @@ jobs:
     runs-on: windows-latest
     needs: Settings
     outputs:
-      Secrets: {{steps.secrets.outputs.Secrets}}
+      Secrets: ${{steps.secrets.outputs.Secrets}}
     steps:
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
