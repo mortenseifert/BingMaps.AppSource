@@ -30,7 +30,6 @@ jobs:
         uses: freddydk/myghgo/ReadSettings@main
         id: settings
   CheckForUpdates:
-    description: Check for updates
     runs-on: windows-latest
     needs: Settings
     steps:
