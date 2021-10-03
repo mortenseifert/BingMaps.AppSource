@@ -118,6 +118,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{needs.Build.Outputs.AppsArtifactsName}}
+          path: '${{ github.workspace}}\artifacts'
 
       - name: Deploy
         uses: freddydk/myghgo/Deploy@main
@@ -125,5 +126,5 @@ jobs:
           secrets: ${{ toJson(secrets) }}
         with:
           workflow: ${{ env.GITHUB_WORKFLOW }}
-          artifactsUrl: ${{needs.Build.Outputs.AppsArtifactsName}}
+          artifactsUrl: '${{ github.workspace}}\artifacts'
 
