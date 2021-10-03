@@ -76,10 +76,10 @@ jobs:
         id: calculateArtifactNames
         run: |
           $settings = '${{ needs.Settings.outputs.Settings }}' | ConvertFrom-Json
-          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
-          $testAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
-          $testResultsArtifactsName = "TestResults"
-          'appsArtifactsName','testAppsArtifactsName','testResultsArtifactsName' | ForEach-Object {
+          $AppsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $TestAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $TestResultsArtifactsName = "TestResults"
+          'AppsArtifactsName','TestAppsArtifactsName','TestResultsArtifactsName' | ForEach-Object {
             $value = (Get-Variable -Name $_).Value
             Write-Host "::set-output name=$_::$value"
             Add-Content -Path $env:GITHUB_ENV -Value "$_=$value"
@@ -117,7 +117,7 @@ jobs:
       - name: Download
         uses: actions/download-artifact@v2
         with:
-          name: ${{needs.Build.Output.AppsArtifactsName}}
+          name: ${{needs.Build.Outputs.AppsArtifactsName}}
 
       - name: Deploy
         uses: freddydk/myghgo/Deploy@main
@@ -125,5 +125,5 @@ jobs:
           secrets: ${{ toJson(secrets) }}
         with:
           workflow: ${{ env.GITHUB_WORKFLOW }}
-          artifactsUrl: ${{needs.Build.Output.AppsArtifactsName}}
+          artifactsUrl: ${{needs.Build.Outputs.AppsArtifactsName}}
 
