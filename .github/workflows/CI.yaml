@@ -28,6 +28,7 @@ jobs:
 
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
+        id: settings
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
   SeeOutput:
