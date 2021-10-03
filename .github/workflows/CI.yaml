@@ -40,10 +40,6 @@ jobs:
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
           settings: ${{needs.Settings.outputs.Settings}}
-  Secrets:
-    runs-on: windows-latest
-    needs: Settings
-    steps:
   Build:
     runs-on: windows-latest
     needs: [ Settings, Secrets ]
