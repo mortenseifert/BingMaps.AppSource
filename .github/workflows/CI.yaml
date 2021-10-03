@@ -21,20 +21,7 @@ jobs:
   Settings:
     runs-on: windows-latest
     outputs:
-      RepoVersion: ${{steps.settings.outputs.RepoVersion}}
-      RepoName: ${{steps.settings.outputs.RepoName}}
-      AppBuild: ${{steps.settings.outputs.AppBuild}}
-      AppRevision: ${{steps.settings.outputs.AppRevision}}
-      KeyVaultName: ${{steps.settings.outputs.KeyVaultName}}
-      TemplateUrl: ${{steps.settings.outputs.TemplateUrl}}
-      TemplateBranch: ${{steps.settings.outputs.TemplateBranch}}
-      LicenseFileUrlSecretName: ${{steps.settings.outputs.LicenseFileUrlSecretName}}
-      InsiderSasTokenSecretName: ${{steps.settings.outputs.InsiderSasTokenSecretName}}
-      CodeSignCertificateUrlSecretName: ${{steps.settings.outputs.CodeSignCertificateUrlSecretName}}
-      CodeSignCertificatePasswordSecretName: ${{steps.settings.outputs.CodeSignCertificatePasswordSecretName}}
-      KeyVaultCertificateUrlSecretName: ${{steps.settings.outputs.KeyVaultCertificateUrlSecretName}}
-      KeyVaultCertificatePasswordSecretName: ${{steps.settings.outputs.KeyVaultCertificatePasswordSecretName}}
-      KeyVaultClientIdSecretName: ${{steps.settings.outputs.KeyVaultClientIdSecretName}}
+      Settings: ${{steps.settings.outputs.Settings}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,25 +30,16 @@ jobs:
         uses: freddydk/myghgo/ReadSettings@main
         with:
           get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
-
-      - name: Output
-        id: settings
-        run: |
-          "RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName".Split(',') | % {
-            $envvar = $_
-            $value = (Get-ChildItem -Path env: | ? { $_.Name -eq $envvar }).value
-            Write-Host "set-Output name=$($_)::$value"
-            Write-Host "::set-Output name=$($_)::$value"
-          }
-        
   SeeOutput:
     runs-on: windows-latest
     needs: Settings
     steps:
     - name: Output
       run: |
-        Write-Host "${{ needs.Settings.outputs.RepoVersion }}"
-        Write-Host "${{ needs.Settings.outputs.MyTest }}"
+        $settingsJson = '${{ needs.Settings.outputs.Settings}}'
+        Write-Host $settingsJson
+        $settings = $settingsJson | ConvertFrom-Json
+        Write-Host $settings.KeyVaultName
   CheckForUpdates:
     runs-on: windows-latest
     needs: Settings
@@ -138,4 +116,3 @@ jobs:
       - name: Cleanup
         if: always()
         uses: freddydk/myghgo/PipelineCleanup@main
-
