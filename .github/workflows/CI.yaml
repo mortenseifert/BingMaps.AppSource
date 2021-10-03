@@ -43,24 +43,7 @@ jobs:
   Secrets:
     runs-on: windows-latest
     needs: Settings
-    outputs:
-      Secrets: ${{steps.readsecrets.outputs.Secrets}}
     steps:
-      - name: Read secrets
-        uses: freddydk/myghgo/ReadSecrets@main
-        id: readsecrets
-        env:
-          secrets: ${{toJson(secrets)}}
-        with:
-          settings: ${{needs.Settings.outputs.Settings}}
-          secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
-  SeeOutput:
-    runs-on: windows-latest
-    needs: Secrets
-    steps:
-    - name: Output
-      run: |
-        Write-Host "${{ needs.Secrets.outputs.Secrets }}"
   Build:
     runs-on: windows-latest
     needs: [ Settings, Secrets ]
@@ -68,11 +51,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Read secrets
+        uses: freddydk/myghgo/ReadSecrets@main
+        env:
+          secrets: ${{toJson(secrets)}}
+        with:
+          settings: ${{needs.Settings.outputs.Settings}}
+          secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
+
       - name: Run pipeline
         uses: freddydk/myghgo/RunPipeline@main
         with:
-          Settings: ${{needs.Settings.outputs.Settings }}
-          Secrets: ${{needs.Secrets.outputs.Secrets }}
+          Settings: ${{ needs.Settings.outputs.Settings }}
+          Secrets: ${{ env.RepoSecrets }}
 
       - name: Publish test results
         if: success() || failure()
