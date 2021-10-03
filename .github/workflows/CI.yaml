@@ -54,6 +54,13 @@ jobs:
         with:
           settings: ${{needs.Settings.outputs.Settings}}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
+  SeeOutput:
+    runs-on: windows-latest
+    needs: Secrets
+    steps:
+    - name: Output
+      run: |
+        Write-Host "${{ needs.Secrets.outputs.Secrets }}"
   Build:
     runs-on: windows-latest
     needs: [ Settings, Secrets ]
