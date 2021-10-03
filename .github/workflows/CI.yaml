@@ -29,17 +29,8 @@ jobs:
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
         id: settings
-  SeeOutput:
-    runs-on: windows-latest
-    needs: Settings
-    steps:
-    - name: Output
-      run: |
-        $settingsJson = '${{ needs.Settings.outputs.Settings}}'
-        Write-Host $settingsJson
-        $settings = $settingsJson | ConvertFrom-Json
-        Write-Host $settings.KeyVaultName
   CheckForUpdates:
+    description: Check for updates
     runs-on: windows-latest
     needs: Settings
     steps:
@@ -61,7 +52,7 @@ jobs:
         with:
           settings: ${{needs.Settings.outputs.Settings}}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
-  RunPipeline:
+  Build:
     runs-on: windows-latest
     needs: [ Settings, Secrets ]
     steps:
