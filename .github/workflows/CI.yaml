@@ -21,14 +21,14 @@ jobs:
   Settings:
     runs-on: windows-latest
     outputs:
-      Settings: ${{steps.settings.outputs.Settings}}
+      Settings: ${{steps.readsettings.outputs.Settings}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
-        id: settings
+        id: readsettings
   CheckForUpdates:
     runs-on: windows-latest
     needs: Settings
@@ -44,11 +44,11 @@ jobs:
     runs-on: windows-latest
     needs: Settings
     outputs:
-      Secrets: ${{steps.secrets.outputs.Secrets}}
+      Secrets: ${{steps.readsecrets.outputs.Secrets}}
     steps:
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
-        id: secrets
+        id: readsecrets
         env:
           secrets: ${{toJson(secrets)}}
         with:
