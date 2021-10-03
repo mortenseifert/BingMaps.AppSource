@@ -76,8 +76,8 @@ jobs:
         id: calculateArtifactNames
         run: |
           $settings = '${{ needs.Settings.outputs.Settings }}' | ConvertFrom-Json
-          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)'
-          $testAppsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)'
+          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)"
+          $testAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)"
           $testResultsArtifactName = "TestResults"
           'appsArtifactsName','testAppsArtifactsName','testResultsArtifactName' | ForEach-Object {
             $value = (Get-Variable -Name $_).Value
