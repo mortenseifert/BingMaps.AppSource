@@ -29,8 +29,6 @@ jobs:
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
         id: settings
-        with:
-          get: RepoVersion,RepoName,AppBuild,AppRevision,KeyVaultName,TemplateUrl,TemplateBranch,LicenseFileUrlSecretName,InsiderSasTokenSecretName,CodeSignCertificateUrlSecretName,CodeSignCertificatePasswordSecretName,KeyVaultCertificateUrlSecretName,KeyVaultCertificatePasswordSecretName,KeyVaultClientIdSecretName
   SeeOutput:
     runs-on: windows-latest
     needs: Settings
@@ -51,8 +49,7 @@ jobs:
       - name: Check for updates to GitHub-Go system files
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
-          templateUrl: ${{needs.Settings.outputs.TemplateUrl}}
-          templateBranch: ${{needs.Settings.outputs.TemplateBranch}}
+          settings: ${{needs.Settings.outputs.Settings}}
   ReadSecrets:
     runs-on: windows-latest
     needs: Settings
