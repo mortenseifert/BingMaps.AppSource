@@ -42,7 +42,7 @@ jobs:
           settings: ${{needs.Settings.outputs.Settings}}
   Build:
     runs-on: windows-latest
-    needs: [ Settings, Secrets ]
+    needs: Settings
     steps:
       - name: Checkout
         uses: actions/checkout@v2
