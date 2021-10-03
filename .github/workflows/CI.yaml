@@ -44,9 +44,9 @@ jobs:
     runs-on: windows-latest
     needs: Settings
     outputs:
-      AppsArtifactName: ${{steps.calculateArtifactNames.outputs.AppsArtifactName}}
-      TestAppsArtifactName: ${{steps.calculateArtifactNames.outputs.TestAppsArtifactName}}
-      TestResultsArtifactName: ${{steps.calculateArtifactNames.outputs.TestResultsArtifactName}}
+      AppsArtifactsName: ${{steps.calculateArtifactNames.outputs.AppsArtifactsName}}
+      TestAppsArtifactsName: ${{steps.calculateArtifactNames.outputs.TestAppsArtifactsName}}
+      TestResultsArtifactsName: ${{steps.calculateArtifactNames.outputs.TestResultsArtifactsName}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -76,10 +76,10 @@ jobs:
         id: calculateArtifactNames
         run: |
           $settings = '${{ needs.Settings.outputs.Settings }}' | ConvertFrom-Json
-          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)"
-          $testAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$(settings.appRevision)"
-          $testResultsArtifactName = "TestResults"
-          'appsArtifactsName','testAppsArtifactsName','testResultsArtifactName' | ForEach-Object {
+          $appsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $testAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $testResultsArtifactsName = "TestResults"
+          'appsArtifactsName','testAppsArtifactsName','testResultsArtifactsName' | ForEach-Object {
             $value = (Get-Variable -Name $_).Value
             Write-Host "::set-output name=$_::$value"
             Add-Content -Path $env:GITHUB_ENV -Value "$_=$value"
