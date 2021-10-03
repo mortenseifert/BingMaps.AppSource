@@ -59,9 +59,8 @@ jobs:
         env:
           secrets: ${{toJson(secrets)}}
         with:
-          keyVaultName: ${{needs.Settings.outputs.KEYVAULTNAME}}
-          secrets: 'licenseFileUrl=${{needs.Settings.outputs.LicenseFileUrlSecretName}},insiderSasToken=${{needs.Settings.outputs.InsiderSasTokenSecretName}},CodeSignCertificateUrl=${{needs.Settings.outputs.CodeSignCertificateUrlSecretName}},CodeSignCertificatePassword=${{needs.Settings.outputs.CodeSignCertificatePasswordSecretName}},KeyVaultCertificateUrl=${{needs.Settings.outputs.KeyVaultCertificateUrlSecretName}},KeyVaultCertificatePassword=${{needs.Settings.outputs.KeyVaultCertificatePasswordSecretName}},KeyVaultClientId=${{needs.Settings.outputs.KeyVaultClientIdSecretName}}'
-
+          settings: ${{needs.Settings.outputs.Settings}}
+          secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
   RunPipeline:
     runs-on: windows-latest
     needs: [ Settings, readsecrets ]
