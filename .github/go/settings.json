@@ -20,5 +20,6 @@
     "testFolders":  [
                         "BingMaps.AppSource_Test",
                         "xyz test"
-                    ]
+                    ],
+    "RepoVersion":  "18.0"
 }
