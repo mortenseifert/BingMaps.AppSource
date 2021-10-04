@@ -46,6 +46,7 @@ jobs:
     runs-on: windows-latest
     outputs:
       deployMatrix: ${{steps.Environments.outputs.deployMatrix}}
+      deployCount: ${{steps.Environments.outputs.deployCount}}
     needs: Settings
     steps:
       - name: Environments
@@ -57,8 +58,10 @@ jobs:
           }
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
-          $deployMatrix = @{ "environment" = @($environments.environments.name | Where-Object { $_ -notlike '*(Production)*'}) } | ConvertTo-Json -compress
+          $useEnvironments = @($environments.environments | Where-Object { $_.name -notlike '*(Production)*'} | ForEach-Object { $_.Name })
+          $deployMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
           Write-Host "::set-output name=deployMatrix::$deployMatrix"
+          Write-Host "::set-output name=deployCount::$($useEnvironments.Count)"
           Write-Host $deployMatrix
   Build:
     runs-on: windows-latest
@@ -133,6 +136,7 @@ jobs:
   Deploy:
     runs-on: windows-latest
     needs: [ Build, Environments ]
+    if: ${{needs.Environments.outputs.deployCount > 0}}
     strategy:
       matrix: ${{fromJson(needs.Environments.outputs.deployMatrix)}}
       fail-fast: false
