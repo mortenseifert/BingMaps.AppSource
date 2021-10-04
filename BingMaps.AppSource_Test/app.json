@@ -1,51 +1,53 @@
 {
-  "id": "09ce43ef-e0bc-4644-a490-6dfd41f3ea2a",
-  "name": "BingMaps.AppSource_Test",
-  "publisher": "Fabrikam Rentals",
-  "brief": "",
-  "description": "",
-  "version": "2.0.0.0",
-  "privacyStatement": "",
-  "EULA": "",
-  "help": "",
-  "url": "",
-  "logo": "",
-  "dependencies": [
-    {
-      "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
-      "publisher": "Microsoft",
-      "name": "Library Assert",
-      "version": "17.0.0.0"
-    },
-    {
-      "id": "e7320ebb-08b3-4406-b1ec-b4927d3e280b",
-      "publisher": "Microsoft",
-      "name": "Any",
-      "version": "17.0.0.0"
-    },
-    {
-      "id": "23de40a6-dfe8-4f80-80db-d70f83ce8caf",
-      "publisher": "Microsoft",
-       "name": "Test Runner",
-       "version": "17.0.0.0"
-    },    
-    {
-      "id": "d22ff4b4-eff0-46cd-8d63-f28e7f646e33",
-      "publisher": "Fabrikam Rentals",
-      "name": "BingMaps.AppSource",
-      "version": "2.0.0.0"
-    }
-  ],
-  "screenshots": [],
-  "application": "17.0.0.0",
-  "platform": "17.0.0.0",
-  "idRanges": [
-    {
-      "from": 70100,
-      "to": 70149
-    }
-  ],
-  "runtime": "6.0",
-  "showMyCode": true,
-  "target": "Cloud"
+    "id":  "09ce43ef-e0bc-4644-a490-6dfd41f3ea2a",
+    "name":  "BingMaps.AppSource_Test",
+    "publisher":  "Fabrikam Rentals",
+    "brief":  "",
+    "description":  "",
+    "version":  "18.0.0.0",
+    "privacyStatement":  "",
+    "EULA":  "",
+    "help":  "",
+    "url":  "",
+    "logo":  "",
+    "dependencies":  [
+                         {
+                             "id":  "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
+                             "publisher":  "Microsoft",
+                             "name":  "Library Assert",
+                             "version":  "17.0.0.0"
+                         },
+                         {
+                             "id":  "e7320ebb-08b3-4406-b1ec-b4927d3e280b",
+                             "publisher":  "Microsoft",
+                             "name":  "Any",
+                             "version":  "17.0.0.0"
+                         },
+                         {
+                             "id":  "23de40a6-dfe8-4f80-80db-d70f83ce8caf",
+                             "publisher":  "Microsoft",
+                             "name":  "Test Runner",
+                             "version":  "17.0.0.0"
+                         },
+                         {
+                             "id":  "d22ff4b4-eff0-46cd-8d63-f28e7f646e33",
+                             "publisher":  "Fabrikam Rentals",
+                             "name":  "BingMaps.AppSource",
+                             "version":  "2.0.0.0"
+                         }
+                     ],
+    "screenshots":  [
+
+                    ],
+    "application":  "17.0.0.0",
+    "platform":  "17.0.0.0",
+    "idRanges":  [
+                     {
+                         "from":  70100,
+                         "to":  70149
+                     }
+                 ],
+    "runtime":  "6.0",
+    "showMyCode":  true,
+    "target":  "Cloud"
 }
