@@ -14,12 +14,10 @@
                                          "BingMaps"
                                      ],
     "appFolders":  [
-                       "BingMaps.AppSource",
-                       "xyz"
+                       "BingMaps.AppSource"
                    ],
     "testFolders":  [
-                        "BingMaps.AppSource_Test",
-                        "xyz test"
+                        "BingMaps.AppSource_Test"
                     ],
     "RepoVersion":  "18.0"
 }
