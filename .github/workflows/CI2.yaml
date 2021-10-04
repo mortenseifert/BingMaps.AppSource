@@ -1,0 +1,24 @@
+name: CI2
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+    branches: [ main ]
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+    branches: [ main ]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: PowerShell
+
+jobs:
+  Build:
+    uses: freddydk/App3/.github/workflows/Build.yaml
+    with:
+      release: false

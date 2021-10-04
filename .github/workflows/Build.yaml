@@ -1,0 +1,150 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      release:
+        required: true
+        type: boolean
+
+defaults:
+  run:
+    shell: PowerShell
+
+jobs:
+  Settings:
+    runs-on: windows-latest
+    outputs:
+      Settings: ${{steps.readsettings.outputs.Settings}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Read settings
+        uses: freddydk/myghgo/ReadSettings@main
+        id: readsettings
+  CheckForUpdates:
+    runs-on: windows-latest
+    needs: Settings
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check for updates to GitHub-Go system files
+        uses: freddydk/myghgo/CheckForUpdates@main
+        with:
+          settings: ${{needs.Settings.outputs.Settings}}
+  Environments:
+    runs-on: windows-latest
+    outputs:
+      deployMatrix: ${{steps.Environments.outputs.matrix}}
+    needs: Settings
+    steps:
+      - name: Environments
+        id: Environments
+        run: |
+          $headers = @{ 
+            "Authorization" = "token ${{github.token}}"
+            "Accept"        = "application/vnd.github.v3+json"
+          }
+          $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
+          $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
+          $deployMatrix = @{ "environment" = @($environments.environments.name | Where-Object { $_ -notlike '*(Production)*'}) } | ConvertTo-Json -compress
+          Write-Host "::set-output name=deployMatrix::$deployMatrix"
+          Write-Host $deployMatrix
+  Build:
+    runs-on: windows-latest
+    needs: Settings
+    outputs:
+      AppsArtifactsName: ${{steps.calculateArtifactNames.outputs.AppsArtifactsName}}
+      TestAppsArtifactsName: ${{steps.calculateArtifactNames.outputs.TestAppsArtifactsName}}
+      TestResultsArtifactsName: ${{steps.calculateArtifactNames.outputs.TestResultsArtifactsName}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Read secrets
+        uses: freddydk/myghgo/ReadSecrets@main
+        env:
+          secrets: ${{toJson(secrets)}}
+        with:
+          settings: ${{needs.Settings.outputs.Settings}}
+          secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
+
+      - name: Run pipeline
+        uses: freddydk/myghgo/RunPipeline@main
+        with:
+          Settings: ${{ needs.Settings.outputs.Settings }}
+          Secrets: ${{ env.RepoSecrets }}
+
+      - name: Publish test results
+        if: success() || failure()
+        uses: mikepenz/action-junit-report@v1
+        with:
+          report_paths: 'TestResults*.xml'
+          github_token: ${{ github.token }}
+
+      - name: Calculate Artifact names
+        id: calculateArtifactNames
+        run: |
+          $settings = '${{ needs.Settings.outputs.Settings }}' | ConvertFrom-Json
+          $AppsArtifactsName = "$($settings.RepoName)-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $TestAppsArtifactsName = "$($settings.RepoName)-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
+          $TestResultsArtifactsName = "TestResults"
+          'AppsArtifactsName','TestAppsArtifactsName','TestResultsArtifactsName' | ForEach-Object {
+            $value = (Get-Variable -Name $_).Value
+            Write-Host "::set-output name=$_::$value"
+            Add-Content -Path $env:GITHUB_ENV -Value "$_=$value"
+          }
+
+      - name: Publish artifacts - apps
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.appsArtifactsName}}
+          path: output/Apps/
+          if-no-files-found: ignore
+
+      - name: Publish artifacts - test apps
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.testAppsArtifactsName}}
+          path: output/TestApps/
+          if-no-files-found: ignore
+
+      - name: Publish artifacts - test results
+        uses: actions/upload-artifact@v2
+        if: success() || failure()
+        with:
+          name: ${{env.testResultsArtifactsName}}
+          path: TestResults.xml
+          if-no-files-found: ignore
+
+      - name: Cleanup
+        if: always()
+        uses: freddydk/myghgo/PipelineCleanup@main
+  Deploy:
+    runs-on: windows-latest
+    needs: [ Build, Environments ]
+    strategy:
+      matrix: ${{fromJson(needs.Environments.outputs.deployMatrix)}}
+      fail-fast: false
+    name: Deploy to ${{matrix.environment}}
+    environment:
+      name: ${{matrix.environment}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{needs.Build.Outputs.AppsArtifactsName}}
+          path: '${{ github.workspace}}\artifacts'
+
+      - name: Deploy
+        uses: freddydk/myghgo/Deploy@main
+        env:
+          authContext: '${{secrets.AuthContext}}'
+        with:
+          environmentName: ${{matrix.environment}}
+          artifactsUrl: '${{ github.workspace}}\artifacts'
