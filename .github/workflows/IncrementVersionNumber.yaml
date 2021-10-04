@@ -3,12 +3,6 @@ name: Increment Version Number
 on:
   workflow_dispatch:
     inputs:
-      publisher:
-        description: Publisher name of the app
-        required: true
-      name:
-        description: Name of the app
-        required: true
       versionNumber:
         description: New Version Number (Major.Minor)
         required: true
