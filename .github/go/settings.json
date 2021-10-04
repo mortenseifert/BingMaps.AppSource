@@ -1,7 +1,7 @@
 {
     "type":  "AppSource App",
     "country":  "us",
-    "VersioningStrategy":  2,
+    "VersioningStrategy":  18,
     "templateUrl":  "https://github.com/freddydk/myASA",
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName":  "LicenseFile",
