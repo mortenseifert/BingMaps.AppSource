@@ -8,6 +8,9 @@
                     },
                     {
                         "path":  "BingMaps.AppSource_Test"
+                    },
+                    {
+                        "path":  "xyz"
                     }
                 ],
     "settings":  {
