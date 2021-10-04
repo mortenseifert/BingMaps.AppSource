@@ -33,7 +33,7 @@ jobs:
           }
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
-          $deployMatrix = @{ "environment" = @($environments.environments.name | where-Object { $_.Split(' ')[0] -like $environmentName }) } | ConvertTo-Json -compress
+          $deployMatrix = @{ "environment" = @($environments.environments.name | where-Object { $_ -notlike '*(Production)*' -and $_.Split(' ')[0] -like $environmentName }) } | ConvertTo-Json -compress
           Write-Host "::set-output name=deployMatrix::$deployMatrix"
           Write-Host $deployMatrix
   Deploy:
@@ -53,3 +53,4 @@ jobs:
         with:
           environmentName: ${{matrix.environment}}
           artifactsUrl: ${{github.event.inputs.appVersion}}
+          appSourceApp: 'Y'

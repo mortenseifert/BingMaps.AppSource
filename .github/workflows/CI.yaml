@@ -156,3 +156,5 @@ jobs:
         with:
           environmentName: ${{matrix.environment}}
           artifactsUrl: '${{ github.workspace}}\artifacts'
+          appSourceApp: 'Y'
+
