@@ -1,0 +1,29 @@
+{
+    "id":  "7013d93c-1a9e-4e15-bf96-c76c2816a6d5",
+    "name":  "xyz test",
+    "publisher":  "Freddy",
+    "version":  "1.0.0.0",
+    "brief":  "",
+    "description":  "",
+    "privacyStatement":  "",
+    "EULA":  "",
+    "help":  "",
+    "url":  "",
+    "logo":  "",
+    "dependencies":  [
+
+                     ],
+    "screenshots":  [
+
+                    ],
+    "platform":  "1.0.0.0",
+    "application":  "18.0.0.0",
+    "idRanges":  [
+                     {
+                         "from":  "50000",
+                         "to":  "99999"
+                     }
+                 ],
+    "showMyCode":  false,
+    "runtime":  "7.0"
+}
