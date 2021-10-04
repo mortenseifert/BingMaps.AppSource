@@ -18,6 +18,7 @@
                        "xyz"
                    ],
     "testFolders":  [
-                        "BingMaps.AppSource_Test"
+                        "BingMaps.AppSource_Test",
+                        "xyz test"
                     ]
 }
