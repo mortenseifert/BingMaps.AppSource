@@ -29,16 +29,14 @@ jobs:
 
       - name: Read settings
         uses: freddydk/myghgo/ReadSettings@main
-        with:
-          get: KeyVaultName,adminCenterApiCredentialsSecretName
 
       - name: Read secrets
         uses: freddydk/myghgo/ReadSecrets@main
         env:
-          secrets: ${{ toJson(secrets) }}
+          secrets: ${{toJson(secrets)}}
         with:
-          keyVaultName: ${{ env.KEYVAULTNAME }}
-          secrets: 'adminCenterApiCredentials=${{ env.adminCenterApiCredentialsSecretName }}'
+          settings: ${{needs.Settings.outputs.Settings}}
+          secrets: 'adminCenterApiCredentials'
 
       - name: Check AdminCenterApiCredentials / Initiate Device Login (open to see code)
         run: |
