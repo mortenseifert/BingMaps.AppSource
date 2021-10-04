@@ -4,17 +4,18 @@
     "VersioningStrategy":  2,
     "templateUrl":  "https://github.com/freddydk/myASA",
     "KeyVaultName":  "BuildVariables",
-    "LicenseFileUrlSecretName": "LicenseFile",
-    "KeyVaultCertificateUrlSecretName": "KeyVaultCertificateFile",
-    "KeyVaultCertificatePasswordSecretName": "KeyVaultCertificatePassword",
-    "KeyVaultClientIdSecretName": "KeyVaultClientId",
-    "CodeSignCertificateUrlSecretName": "xCodeSignCertificateUrl",
-    "CodeSignCertificatePasswordSecretName": "xCodeSignCertificatePassword",
+    "LicenseFileUrlSecretName":  "LicenseFile",
+    "KeyVaultCertificateUrlSecretName":  "KeyVaultCertificateFile",
+    "KeyVaultCertificatePasswordSecretName":  "KeyVaultCertificatePassword",
+    "KeyVaultClientIdSecretName":  "KeyVaultClientId",
+    "CodeSignCertificateUrlSecretName":  "xCodeSignCertificateUrl",
+    "CodeSignCertificatePasswordSecretName":  "xCodeSignCertificatePassword",
     "AppSourceCopMandatoryAffixes":  [
-                                          "BingMaps"
+                                         "BingMaps"
                                      ],
     "appFolders":  [
-                       "BingMaps.AppSource"
+                       "BingMaps.AppSource",
+                       "xyz"
                    ],
     "testFolders":  [
                         "BingMaps.AppSource_Test"
