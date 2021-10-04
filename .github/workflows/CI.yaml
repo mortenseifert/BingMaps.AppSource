@@ -40,6 +40,24 @@ jobs:
         uses: freddydk/myghgo/CheckForUpdates@main
         with:
           settings: ${{needs.Settings.outputs.Settings}}
+  Environments:
+    runs-on: windows-latest
+    outputs:
+      deployMatrix: ${{steps.Environments.outputs.matrix}}
+    needs: Settings
+    steps:
+      - name: Environments
+        id: Environments
+        run: |
+          $headers = @{ 
+            "Authorization" = "token ${{github.token}}"
+            "Accept"        = "application/vnd.github.v3+json"
+          }
+          $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
+          $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
+          $deployMatrix = @{ "environment" = @($environments.environments.name | Where-Object { $_ -notlike '*(Production)*'}) } | ConvertTo-Json -compress
+          Write-Host "::set-output name=deployMatrix::$deployMatrix"
+          Write-Host $deployMatrix
   Build:
     runs-on: windows-latest
     needs: Settings
@@ -112,8 +130,17 @@ jobs:
         uses: freddydk/myghgo/PipelineCleanup@main
   Deploy:
     runs-on: windows-latest
-    needs: Build
+    needs: [ Build, Environments ]
+    strategy:
+      matrix: ${{fromJson(needs.Environments.outputs.deployMatrix)}}
+      fail-fast: false
+    name: Deploy to ${{matrix.environment}}
+    environment:
+      name: ${{matrix.environment}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Download
         uses: actions/download-artifact@v2
         with:
@@ -123,8 +150,7 @@ jobs:
       - name: Deploy
         uses: freddydk/myghgo/Deploy@main
         env:
-          secrets: ${{ toJson(secrets) }}
+          authContext: '${{secrets.AuthContext}}'
         with:
-          workflow: ${{ env.GITHUB_WORKFLOW }}
+          environmentName: ${{matrix.environment}}
           artifactsUrl: '${{ github.workspace}}\artifacts'
-
