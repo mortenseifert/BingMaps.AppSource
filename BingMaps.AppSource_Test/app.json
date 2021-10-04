@@ -47,5 +47,5 @@
   ],
   "runtime": "6.0",
   "showMyCode": true,
-  "target": "OnPrem"
+  "target": "Cloud"
 }
