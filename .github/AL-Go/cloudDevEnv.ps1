@@ -1,9 +1,9 @@
-$gitHubGoHelperPath = "$([System.IO.Path]::GetTempFileName()).ps1"
+$ALGoHelperPath = "$([System.IO.Path]::GetTempFileName()).ps1"
 $webClient = New-Object System.Net.WebClient
 $webClient.CachePolicy = New-Object System.Net.Cache.RequestCachePolicy -argumentList ([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore)
 $webClient.Encoding = [System.Text.Encoding]::UTF8
-$webClient.DownloadFile('https://raw.githubusercontent.com/freddydk/myghgo/main/GitHub-Go-Helper.ps1', $gitHubGoHelperPath)
-. $gitHubGoHelperPath -local
+$webClient.DownloadFile('https://raw.githubusercontent.com/freddydk/AL-Go-Actions/main/AL-Go-Helper.ps1', $ALGoHelperPath)
+. $ALGoHelperPath -local
 
 $environmentName = Enter-Value `
     -title "Environment name" `

@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read settings
-        uses: freddydk/myghgo/ReadSettings@main
+        uses: freddydk/AL-Go-Actions/ReadSettings@main
         id: readsettings
         with:
           release: 'Y'
@@ -39,8 +39,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Check for updates to GitHub-Go system files
-        uses: freddydk/myghgo/CheckForUpdates@main
+      - name: Check for updates to AL-Go system files
+        uses: freddydk/AL-Go-Actions/CheckForUpdates@main
         with:
           settings: ${{needs.Settings.outputs.Settings}}
   Environments:
@@ -58,9 +58,10 @@ jobs:
           }
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
-          $deployMatrix = @{ "environment" = @($environments.environments.name | Where-Object { $_ -notlike '*(Production)*'}) } | ConvertTo-Json -compress
+          $useEnvironments = @($environments.environments | ForEach-Object { $_.Name })
+          if ($useEnvironments.Count -eq 0) { $useEnvironments = @("N/A") }
+          $deployMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
           Write-Host "::set-output name=deployMatrix::$deployMatrix"
-          Write-Host $deployMatrix
   Build:
     runs-on: windows-latest
     needs: Settings
@@ -73,7 +74,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read secrets
-        uses: freddydk/myghgo/ReadSecrets@main
+        uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
           secrets: ${{toJson(secrets)}}
         with:
@@ -81,7 +82,7 @@ jobs:
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
 
       - name: Run pipeline
-        uses: freddydk/myghgo/RunPipeline@main
+        uses: freddydk/AL-Go-Actions/RunPipeline@main
         with:
           Settings: ${{ needs.Settings.outputs.Settings }}
           Secrets: ${{ env.RepoSecrets }}
@@ -158,7 +159,7 @@ jobs:
 
       - name: Cleanup
         if: always()
-        uses: freddydk/myghgo/PipelineCleanup@main
+        uses: freddydk/AL-Go-Actions/PipelineCleanup@main
   Deploy:
     runs-on: windows-latest
     needs: [ Build, Environments ]
@@ -179,7 +180,8 @@ jobs:
           path: '${{ github.workspace}}\artifacts'
 
       - name: Deploy
-        uses: freddydk/myghgo/Deploy@main
+        if: ${{matrix.environment != 'N/A'}}
+        uses: freddydk/AL-Go-Actions/Deploy@main
         env:
           authContext: '${{secrets.AuthContext}}'
         with:
