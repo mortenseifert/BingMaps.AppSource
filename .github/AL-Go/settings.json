@@ -2,7 +2,7 @@
     "type":  "AppSource App",
     "country":  "us",
     "VersioningStrategy":  18,
-    "templateUrl":  "https://github.com/freddydk/AL-Go-AppSource",
+    "templateUrl":  "https://github.com/microsoft/AL-Go-AppSource",
     "KeyVaultName":  "BuildVariables",
     "LicenseFileUrlSecretName":  "LicenseFile",
     "KeyVaultCertificateUrlSecretName":  "KeyVaultCertificateFile",
