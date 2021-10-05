@@ -59,10 +59,10 @@ jobs:
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
           $useEnvironments = @($environments.environments | Where-Object { $_.name -notlike '*(Production)*'} | ForEach-Object { $_.Name })
+          Write-Host "::set-output name=deployCount::$($useEnvironments.Count)"
+          if ($useEnvironments.Count -eq 0) { $useEnvironments = @("N/A") }
           $deployMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
           Write-Host "::set-output name=deployMatrix::$deployMatrix"
-          Write-Host "::set-output name=deployCount::$($useEnvironments.Count)"
-          Write-Host $deployMatrix
   Build:
     runs-on: windows-latest
     needs: Settings
