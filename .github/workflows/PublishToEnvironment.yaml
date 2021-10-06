@@ -21,7 +21,8 @@ jobs:
   Environments:
     runs-on: windows-latest
     outputs:
-      deployMatrix: ${{steps.Environments.outputs.deployMatrix}}
+      deploymentMatrix: ${{steps.Environments.outputs.deploymentMatrix}}
+      deploymentCount: ${{steps.Environments.outputs.deploymentCount}}
     steps:
       - name: Environments
         id: Environments
@@ -34,22 +35,22 @@ jobs:
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
           $useEnvironments = @($environments.environments | Where-Object { $_.Name -notlike '*(Production)*' -and $_.Name.Split(' ')[0] -like $environmentName } | ForEach-Object { $_.Name })
-          if ($useEnvironments.Count -eq 0) { $useEnvironments = @("N/A") }
-          $deployMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
-          Write-Host "::set-output name=deployMatrix::$deployMatrix"
+          $deploymentMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
+          Write-Host "::set-output name=deploymentMatrix::$deploymentMatrix"
+          Write-Host "::set-output name=deploymentCount::$($useEnvironments.Count)"
   Deploy:
     runs-on: windows-latest
     needs: [ Environments ]
+    if: ${{needs.Environments.outputs.deploymentCount > 0}}
     strategy:
-      matrix: ${{fromJson(needs.Environments.outputs.deployMatrix)}}
+      matrix: ${{fromJson(needs.Environments.outputs.deploymentMatrix)}}
       fail-fast: false
     name: Deploy to ${{matrix.environment}}
     environment:
       name: ${{matrix.environment}}
     steps:
       - name: Deploy
-        if: ${{matrix.environment != 'N/A'}}
-        uses: microsoft/AL-Go-Actions/Deploy@main
+        uses: freddydk/AL-Go-Actions/Deploy@main
         env:
           authContext: '${{secrets.AuthContext}}'
         with:
