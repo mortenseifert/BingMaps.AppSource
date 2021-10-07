@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read settings
-        uses: microsoft/AL-Go-Actions/ReadSettings@main
+        uses: freddydk/AL-Go-Actions/ReadSettings@main
         id: readsettings
         with:
           release: 'N'
@@ -39,13 +39,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Check for updates to AL-Go system files
-        uses: microsoft/AL-Go-Actions/CheckForUpdates@main
+        uses: freddydk/AL-Go-Actions/CheckForUpdates@main
         with:
           settings: ${{needs.Settings.outputs.Settings}}
   Environments:
     runs-on: windows-latest
     outputs:
-      deployMatrix: ${{steps.Environments.outputs.deployMatrix}}
+      deploymentMatrix: ${{steps.Environments.outputs.deploymentMatrix}}
+      deploymentCount: ${{steps.Environments.outputs.deploymentCount}}
     needs: Settings
     steps:
       - name: Environments
@@ -58,9 +59,9 @@ jobs:
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json
           $useEnvironments = @($environments.environments | Where-Object { $_.name -notlike '*(Production)*'} | ForEach-Object { $_.Name })
-          if ($useEnvironments.Count -eq 0) { $useEnvironments = @("N/A") }
-          $deployMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
-          Write-Host "::set-output name=deployMatrix::$deployMatrix"
+          $deploymentMatrix = @{ "environment" = $useEnvironments } | ConvertTo-Json -compress
+          Write-Host "::set-output name=deploymentMatrix::$deploymentMatrix"
+          Write-Host "::set-output name=deploymentCount::$($useEnvironments.Count)"
   Build:
     runs-on: windows-latest
     needs: Settings
@@ -73,7 +74,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read secrets
-        uses: microsoft/AL-Go-Actions/ReadSecrets@main
+        uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
           secrets: ${{toJson(secrets)}}
         with:
@@ -81,7 +82,7 @@ jobs:
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
 
       - name: Run pipeline
-        uses: microsoft/AL-Go-Actions/RunPipeline@main
+        uses: freddydk/AL-Go-Actions/RunPipeline@main
         with:
           Settings: ${{ needs.Settings.outputs.Settings }}
           Secrets: ${{ env.RepoSecrets }}
@@ -130,12 +131,13 @@ jobs:
 
       - name: Cleanup
         if: always()
-        uses: microsoft/AL-Go-Actions/PipelineCleanup@main
+        uses: freddydk/AL-Go-Actions/PipelineCleanup@main
   Deploy:
     runs-on: windows-latest
     needs: [ Build, Environments ]
+    if: ${{needs.Environments.outputs.deploymentCount > 0}}
     strategy:
-      matrix: ${{fromJson(needs.Environments.outputs.deployMatrix)}}
+      matrix: ${{fromJson(needs.Environments.outputs.deploymentMatrix)}}
       fail-fast: false
     name: Deploy to ${{matrix.environment}}
     environment:
@@ -151,8 +153,7 @@ jobs:
           path: '${{ github.workspace}}\artifacts'
 
       - name: Deploy
-        if: ${{matrix.environment != 'N/A'}}
-        uses: microsoft/AL-Go-Actions/Deploy@main
+        uses: freddydk/AL-Go-Actions/Deploy@main
         env:
           authContext: '${{secrets.AuthContext}}'
         with:
