@@ -47,7 +47,7 @@ jobs:
         id: Projects
         run: |
           if (Test-Path ".AL-Go" -PathType Container) {
-            $projects = @("root")
+            $projects = @(".")
           }
           else {
             $projects = @(Get-ChildItem -Path $ENV:GITHUB_WORKSPACE -Directory | Where-Object { Test-Path (Join-Path $_.FullName ".AL-Go") -PathType Container } | ForEach-Object { $_.Name })
@@ -134,7 +134,7 @@ jobs:
         id: calculateArtifactNames
         run: |
           $project = '${{matrix.project}}'
-          if ($project -eq "root") { $project = $settings.RepoName }
+          if ($project -eq ".") { $project = $settings.RepoName }
           $settings = '${{ steps.readsettings.outputs.Settings }}' | ConvertFrom-Json
           $AppsArtifactsName = "$project-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
           $TestAppsArtifactsName = "$project-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
