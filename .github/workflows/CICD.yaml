@@ -77,6 +77,12 @@ jobs:
           }
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
           $environments = @((Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json).environments | ForEach-Object { $_.Name })
+          if ($environments.Count -eq 1) {
+            $environmentsJSon = "[$($environments | ConvertTo-Json -compress)]"
+          }
+          else {
+            $environmentsJSon = $environments | ConvertTo-Json -compress
+          }
           Write-Host "::set-output name=environments::$($environments | ConvertTo-Json -compress)"
           Write-Host "::set-output name=environmentCount::$($environments.Count)"
   Build:
