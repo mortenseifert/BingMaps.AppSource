@@ -61,7 +61,7 @@ jobs:
           Write-Host "::set-output name=projects::$projectsJson"
           Write-Host "::set-output name=projectCount::$projectsJson"
           Write-Host "set-output name=projects::$projectsJson"
-          Write-Host "set-output name=projectCount::$projectsJson
+          Write-Host "set-output name=projectCount::$projectsJson"
   Environments:
     runs-on: windows-latest
     outputs:
