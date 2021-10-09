@@ -133,9 +133,9 @@ jobs:
       - name: Calculate Artifact names
         id: calculateArtifactNames
         run: |
+          $settings = '${{steps.readsettings.outputs.Settings}}' | ConvertFrom-Json
           $project = '${{matrix.project}}'
           if ($project -eq ".") { $project = $settings.RepoName }
-          $settings = '${{ steps.readsettings.outputs.Settings }}' | ConvertFrom-Json
           $AppsArtifactsName = "$project-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
           $TestAppsArtifactsName = "$project-TestApps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
           $TestResultsArtifactsName = "$project-TestResults"
