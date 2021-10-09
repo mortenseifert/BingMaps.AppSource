@@ -31,8 +31,11 @@ defaults:
     shell: PowerShell
 
 jobs:
-  Release:
+  CreateRelease:
     runs-on: windows-latest
+    outputs:
+      artifacts: ${{steps.analyzeartifacts.outputs.artifacts}}
+      upload_url: ${{steps.createrelease.outputs.upload_url}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -48,32 +51,33 @@ jobs:
           templateUrl: ${{ env.TemplateUrl }}
           templateBranch: ${{ env.TemplateBranch }}
 
-      - name: Download Artifacts
-        id: downloadartifacts
+      - name: Analyze Artifacts
+        id: analyzeartifacts
         run: |
+          Write-Host "Analyzing artifacts"
           $appVersion = '${{github.event.inputs.appVersion}}'
-          $ALGoHelperPath = "$([System.IO.Path]::GetTempFileName()).ps1"
-          $webClient = New-Object System.Net.WebClient
-          $webClient.CachePolicy = New-Object System.Net.Cache.RequestCachePolicy -argumentList ([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore)
-          $webClient.Encoding = [System.Text.Encoding]::UTF8
-          $webClient.DownloadFile('https://raw.githubusercontent.com/freddydk/AL-Go-Actions/main/AL-Go-Helper.ps1', $ALGoHelperPath)
-          . $ALGoHelperPath -local
-          $baseFolder = Join-Path $ENV:GITHUB_WORKSPACE "artifacts"
-          New-Item $baseFolder -ItemType Directory | Out-Null
-          $allArtifacts = GetArtifacts -token '${{github.token}}' -api_url $ENV:GITHUB_API_URL -repository $ENV:GITHUB_REPOSITORY
+          $headers = @{ 
+              "Authorization" = "token ${{ github.token }}"
+              "Accept"        = "application/json"
+          }
+          $allArtifacts = Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/actions/artifacts" | ConvertFrom-Json
           $artifactsVersion = $appVersion
           if ($appVersion -eq "latest") {
-            $artifact = $allArtifacts | Where-Object { $_.name -like "*-Apps-*" } | Select-Object -First 1
+            $artifact = $allArtifacts.artifacts | Where-Object { $_.name -like "*-Apps-*" } | Select-Object -First 1
             $artifactsVersion = $artifact.name.SubString($artifact.name.IndexOf('-Apps-')+6)
           }
-          $allArtifacts | Where-Object { $_.name -like "*-Apps-$artifactsVersion" } | ForEach-Object {
-            DownloadArtifact -token '${{github.token}}' -artifact $_ -path $baseFolder
+          $include = @()
+          $allArtifacts.artifacts | Where-Object { $_.name -like "*-Apps-$($artifactsVersion)*" } | ForEach-Object {
+            $include += $( [ordered]@{ "name" = $_.name; "url" = $_.archive_download_url } )
           }
-          $apps = @((Get-ChildItem -Path $baseFolder) | ForEach-Object { $_.FullName })
-          $apps | out-host
-          $zipFilename = "$($ENV:GITHUB_REPOSITORY.Replace('/','-'))-${{github.event.inputs.name}}.zip".split([System.IO.Path]::GetInvalidFileNameChars()) -join ''
-          Write-Host "::set-output name=zipfilename::$zipFilename"
-          Compress-Archive -Path (Join-Path $baseFolder '*') -destinationPath (Join-Path $ENV:GITHUB_WORKSPACE $zipFilename)
+          if ($include.Count -eq 0) {
+            Write-Host "::Error::No artifacts found"
+            exit 1
+          }
+          $artifacts = @{ "include" = $include }
+          $artifactsJson = $artifacts | ConvertTo-Json -compress
+          Write-Host "::set-output name=artifacts::$artifactsJson"
+          Write-Host "set-output name=artifacts::$artifactsJson"
 
       - name: Create release
         uses: actions/create-release@v1
@@ -87,12 +91,28 @@ jobs:
           tag_name: '${{github.event.inputs.tag}}'
           body_path: README.md
 
+  UploadArtifacts:
+    runs-on: windows-latest
+    needs: [ CreateRelease ]
+    strategy:
+      matrix: ${{fromJson(needs.CreateRelease.outputs.artifacts)}}
+      fail-fast: true
+    steps:
+      - name: Download artifact
+        run: |
+          Write-Host "Downloading artifact ${{ matrix.name}}"
+          $headers = @{ 
+              "Authorization" = "token ${{ github.token }}"
+              "Accept"        = "application/vnd.github.v3+json"
+          }
+          Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri '${{ matrix.url }}' -OutFile '${{ matrix.name }}.zip'
+          
       - name: Upload release artifacts
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{steps.createrelease.outputs.upload_url}}
-          asset_path: ${{steps.downloadartifacts.outputs.zipfilename}}
-          asset_name: ${{steps.downloadartifacts.outputs.zipfilename}}
+          upload_url: ${{needs.createrelease.outputs.upload_url}}
+          asset_path: '${{ matrix.name }}.zip'
+          asset_name: '${{ matrix.name }}.zip'
           asset_content_type: application/zip
