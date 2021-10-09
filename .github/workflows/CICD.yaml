@@ -59,9 +59,9 @@ jobs:
             $projectsJSon = $projects | ConvertTo-Json -compress
           }
           Write-Host "::set-output name=projects::$projectsJson"
-          Write-Host "::set-output name=projectCount::$projectsJson"
+          Write-Host "::set-output name=projectCount::$($projects.Count)"
           Write-Host "set-output name=projects::$projectsJson"
-          Write-Host "set-output name=projectCount::$projectsJson"
+          Write-Host "set-output name=projectCount::$($projects.Count)"
   Environments:
     runs-on: windows-latest
     outputs:
@@ -83,8 +83,10 @@ jobs:
           else {
             $environmentsJSon = $environments | ConvertTo-Json -compress
           }
-          Write-Host "::set-output name=environments::$($environments | ConvertTo-Json -compress)"
+          Write-Host "::set-output name=environments::$environmentsJson"
           Write-Host "::set-output name=environmentCount::$($environments.Count)"
+          Write-Host "set-output name=environments::$environmentsJson"
+          Write-Host "set-output name=environmentCount::$($environments.Count)"
   Build:
     runs-on: windows-latest
     needs: [ Projects ]
