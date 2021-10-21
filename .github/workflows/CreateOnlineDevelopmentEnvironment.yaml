@@ -29,13 +29,14 @@ jobs:
 
       - name: Read settings
         uses: freddydk/AL-Go-Actions/ReadSettings@main
+        id: readsettings
 
       - name: Read secrets
         uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
           secrets: ${{toJson(secrets)}}
         with:
-          settingsJson: ${{needs.Settings.outputs.Settings}}
+          settingsJson: ${{steps.readsettings.outputs.SettingsJson}}
           secrets: 'adminCenterApiCredentials'
 
       - name: Check AdminCenterApiCredentials / Initiate Device Login (open to see code)

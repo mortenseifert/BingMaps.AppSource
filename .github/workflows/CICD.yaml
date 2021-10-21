@@ -114,14 +114,14 @@ jobs:
         env:
           secrets: ${{toJson(secrets)}}
         with:
-          settingsJson: ${{steps.readsettings.outputs.Settings}}
+          settingsJson: ${{steps.readsettings.outputs.SettingsJson}}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
 
       - name: Run pipeline
         uses: freddydk/AL-Go-Actions/RunPipeline@main
         with:
           Project: ${{matrix.project}}
-          SettingsJson: ${{ steps.readsettings.outputs.Settings }}
+          SettingsJson: ${{ steps.readsettings.outputs.SettingsJson }}
           SecretsJson: ${{ env.RepoSecrets }}
 
       - name: Publish test results
@@ -135,7 +135,7 @@ jobs:
       - name: Calculate Artifact names
         id: calculateArtifactNames
         run: |
-          $settings = '${{steps.readsettings.outputs.Settings}}' | ConvertFrom-Json
+          $settings = '${{steps.readsettings.outputs.SettingsJson}}' | ConvertFrom-Json
           $project = '${{matrix.project}}'
           if ($project -eq ".") { $project = $settings.RepoName }
           $AppsArtifactsName = "$project-Apps-$($settings.repoVersion).$($settings.appBuild).$($settings.appRevision)"
