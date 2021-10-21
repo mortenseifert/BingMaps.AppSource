@@ -116,12 +116,13 @@ jobs:
         with:
           settingsJson: ${{steps.readsettings.outputs.SettingsJson}}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
+          updateSettingsWithValues: 'Y'
 
       - name: Run pipeline
         uses: freddydk/AL-Go-Actions/RunPipeline@main
         with:
           Project: ${{matrix.project}}
-          SettingsJson: ${{ steps.readsettings.outputs.SettingsJson }}
+          SettingsJson: ${{ env.Settings }}
           SecretsJson: ${{ env.RepoSecrets }}
 
       - name: Publish test results
@@ -134,6 +135,7 @@ jobs:
 
       - name: Calculate Artifact names
         id: calculateArtifactNames
+        if: success() || failure()
         run: |
           $settings = '${{steps.readsettings.outputs.SettingsJson}}' | ConvertFrom-Json
           $project = '${{matrix.project}}'
@@ -172,6 +174,8 @@ jobs:
       - name: Cleanup
         if: always()
         uses: freddydk/AL-Go-Actions/PipelineCleanup@main
+        with:
+          Project: ${{matrix.project}}
   Deploy:
     runs-on: windows-latest
     needs: [ Build, Environments, Projects ]
