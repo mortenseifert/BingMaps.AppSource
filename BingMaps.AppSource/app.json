@@ -1,10 +1,10 @@
 {
-    "id":  "d22ff4b4-eff0-46cd-8d63-f28e7f646e33",
+    "id":  "4270bff7-c860-434f-b09a-0f3e37d243fd",
     "name":  "BingMaps.AppSource",
     "publisher":  "Fabrikam Rentals",
     "brief":  "BingMaps Integration",
     "description":  "BingMaps Integration App with geocode functionality and map control",
-    "version":  "18.0.0.0",
+    "version":  "1.0.0.0",
     "privacyStatement":  "https://dev.azure.com/businesscentralapps/BingMaps.AppSource",
     "EULA":  "https://dev.azure.com/businesscentralapps/BingMaps.AppSource",
     "help":  "https://dev.azure.com/businesscentralapps/BingMaps.AppSource",
@@ -17,8 +17,8 @@
     "screenshots":  [
 
                     ],
-    "platform":  "17.0.0.0",
-    "application":  "17.0.0.0",
+    "platform":  "18.0.0.0",
+    "application":  "18.0.0.0",
     "idRanges":  [
                      {
                          "from":  70074119,
@@ -35,7 +35,6 @@
                          ],
     "runtime":  "6.0",
     "keyVaultUrls":  [
-                         "https://bingmapsecrets.vault.azure.net"
                      ],
     "applicationInsightsKey":  "553bf903-53ae-4d02-ae4f-06ac1d5682ef"
 }
