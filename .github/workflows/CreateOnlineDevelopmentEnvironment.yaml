@@ -35,7 +35,7 @@ jobs:
         env:
           secrets: ${{toJson(secrets)}}
         with:
-          settings: ${{needs.Settings.outputs.Settings}}
+          settingsJson: ${{needs.Settings.outputs.Settings}}
           secrets: 'adminCenterApiCredentials'
 
       - name: Check AdminCenterApiCredentials / Initiate Device Login (open to see code)

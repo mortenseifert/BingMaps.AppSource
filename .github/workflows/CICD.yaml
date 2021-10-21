@@ -114,15 +114,15 @@ jobs:
         env:
           secrets: ${{toJson(secrets)}}
         with:
-          settings: ${{steps.readsettings.outputs.Settings}}
+          settingsJson: ${{steps.readsettings.outputs.Settings}}
           secrets: 'licenseFileUrl,insiderSasToken,CodeSignCertificateUrl,CodeSignCertificatePassword,KeyVaultCertificateUrl,KeyVaultCertificatePassword,KeyVaultClientId'
 
       - name: Run pipeline
         uses: freddydk/AL-Go-Actions/RunPipeline@main
         with:
           Project: ${{matrix.project}}
-          Settings: ${{ steps.readsettings.outputs.Settings }}
-          Secrets: ${{ env.RepoSecrets }}
+          SettingsJson: ${{ steps.readsettings.outputs.Settings }}
+          SecretsJson: ${{ env.RepoSecrets }}
 
       - name: Publish test results
         if: success() || failure()
