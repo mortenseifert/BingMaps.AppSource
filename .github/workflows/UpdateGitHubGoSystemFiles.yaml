@@ -22,16 +22,15 @@ jobs:
 
       - name: Read settings
         uses: freddydk/AL-Go-Actions/ReadSettings@main
-        id: readsettings
         with:
           get: KeyVaultName,GhTokenWorkflowSecretName,TemplateUrl,TemplateBranch
 
       - name: Read secrets
         uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
-          secrets: ${{toJson(secrets)}}
+          secrets: ${{ toJson(secrets) }}
         with:
-          settingsJson: ${{steps.readsettings.outputs.SettingsJson}}
+          settingsJson: ${{ env.Settings }}
           secrets: 'ghTokenWorkflow=${{ env.GHTOKENWORKFLOWSECRETNAME }}'
 
       - name: Update AL-Go system files

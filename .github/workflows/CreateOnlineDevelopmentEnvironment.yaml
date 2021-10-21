@@ -33,7 +33,7 @@ jobs:
       - name: Read secrets
         uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
-          secrets: ${{toJson(secrets)}}
+          secrets: ${{ toJson(secrets) }}
         with:
           settingsJson: ${{ env.Settings }}
           secrets: 'adminCenterApiCredentials'
