@@ -48,7 +48,7 @@ jobs:
 
       - name: Read settings
         uses: freddydk/AL-Go-Actions/ReadSettings@main
-        id: readsettings
+        id: ReadSettings
         with:
           get: githubRunner
 
