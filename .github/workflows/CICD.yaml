@@ -41,9 +41,16 @@ jobs:
       projectCount: ${{ steps.Projects.outputs.projectCount }}
       environments: ${{ steps.Environments.outputs.environments }}
       environmentCount: ${{ steps.Environments.outputs.environmentCount }}
+      githubRunner: ${{ steps.ReadSettings.outputs.githubRunner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Read settings
+        uses: freddydk/AL-Go-Actions/ReadSettings@main
+        id: readsettings
+        with:
+          get: githubRunner
 
       - name: Projects
         id: Projects
@@ -85,8 +92,8 @@ jobs:
           Write-Host "set-output name=environments::$environmentsJson"
           Write-Host "set-output name=environmentCount::$($environments.Count)"
   Build:
-    runs-on: windows-latest
     needs: [ Analyze ]
+    runs-on: ${{ needs.Analyze.outputs.githubRunner }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.Analyze.outputs.projects) }}
