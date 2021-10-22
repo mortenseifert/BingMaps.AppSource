@@ -41,16 +41,21 @@ jobs:
       projectCount: ${{ steps.Projects.outputs.projectCount }}
       environments: ${{ steps.Environments.outputs.environments }}
       environmentCount: ${{ steps.Environments.outputs.environmentCount }}
-      githubRunner: ${{ steps.ReadSettings.outputs.githubRunner }}
+      githubRunner: ${{ steps.OutputSettings.outputs.githubRunner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Read settings
         uses: freddydk/AL-Go-Actions/ReadSettings@main
-        id: ReadSettings
         with:
           get: githubRunner
+
+      - name: Output settings
+        id: OutputSettings
+        run: |
+          Write-Host "::set-output name=githubRunner::$env:githubRunner"
+          Write-Host "set-output name=githubRunner::$env:githubRunner"
 
       - name: Projects
         id: Projects
