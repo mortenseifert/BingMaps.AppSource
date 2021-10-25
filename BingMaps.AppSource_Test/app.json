@@ -39,15 +39,15 @@
     "screenshots":  [
 
                     ],
-    "application":  "18.0.0.0",
-    "platform":  "18.0.0.0",
+    "application":  "18.2.0.0",
+    "platform":  "18.2.0.0",
     "idRanges":  [
                      {
                          "from":  70100,
                          "to":  70149
                      }
                  ],
-    "runtime":  "6.0",
+    "runtime":  "7.2",
     "showMyCode":  true,
     "target":  "Cloud"
 }
