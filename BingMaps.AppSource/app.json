@@ -1,7 +1,7 @@
 {
     "id":  "4270bff7-c860-434f-b09a-0f3e37d243fd",
     "name":  "BingMaps.AppSource",
-    "publisher":  "Fabrikam Rentals",
+    "publisher":  "Freddy Kristiansen",
     "brief":  "BingMaps Integration",
     "description":  "BingMaps Integration App with geocode functionality and map control",
     "version":  "2.0.0.0",

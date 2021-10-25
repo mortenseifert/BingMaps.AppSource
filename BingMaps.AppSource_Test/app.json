@@ -1,7 +1,7 @@
 {
     "id":  "81eb0a83-7ca0-42e3-9dac-0b530a7c326b",
     "name":  "BingMaps.AppSource_Test",
-    "publisher":  "Fabrikam Rentals",
+    "publisher":  "Freddy Kristiansen",
     "brief":  "",
     "description":  "",
     "version":  "2.0.0.0",
@@ -31,7 +31,7 @@
                          },
                          {
                              "id":  "4270bff7-c860-434f-b09a-0f3e37d243fd",
-                             "publisher":  "Fabrikam Rentals",
+                             "publisher":  "Freddy Kristiansen",
                              "name":  "BingMaps.AppSource",
                              "version":  "1.0.0.0"
                          }
