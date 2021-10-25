@@ -8,9 +8,8 @@
     "KeyVaultCertificateUrlSecretName":  "KeyVaultCertificateFile",
     "KeyVaultCertificatePasswordSecretName":  "KeyVaultCertificatePassword",
     "KeyVaultClientIdSecretName":  "KeyVaultClientId",
-    "CodeSignCertificateUrlSecretName":  "xCodeSignCertificateUrl",
-    "CodeSignCertificatePasswordSecretName":  "xCodeSignCertificatePassword",
-    "GitHubRunner": "self-hosted",
+    "CodeSignCertificateUrlSecretName":  "CodeSignCertificateUrl",
+    "CodeSignCertificatePasswordSecretName":  "CodeSignCertificatePassword",
     "AppSourceCopMandatoryAffixes":  [
                                          "BingMaps"
                                      ],
