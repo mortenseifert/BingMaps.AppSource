@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   CheckForUpdates:
-    runs-on: windows-latest
+    runs-on: [ windows-latest ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,15 +26,14 @@ jobs:
       - name: Read settings
         uses: freddydk/AL-Go-Actions/ReadSettings@main
         with:
-          get: TemplateUrl,TemplateBranch
+          get: TemplateUrl
 
       - name: Check for updates to AL-Go system files
         uses: freddydk/AL-Go-Actions/CheckForUpdates@main
         with:
           templateUrl: ${{ env.TemplateUrl }}
-          templateBranch: ${{ env.TemplateBranch }}
   Analyze:
-    runs-on: windows-latest
+    runs-on: [ windows-latest ]
     outputs:
       projects: ${{ steps.Projects.outputs.projects }}
       projectCount: ${{ steps.Projects.outputs.projectCount }}
@@ -53,8 +52,9 @@ jobs:
       - name: Output settings
         id: OutputSettings
         run: |
-          Write-Host "::set-output name=githubRunner::$env:githubRunner"
-          Write-Host "set-output name=githubRunner::$env:githubRunner"
+          $gitHubRunner = "$env:githubRunner".Split(',') | ConvertTo-Json -compress
+          Write-Host "::set-output name=githubRunner::$githubRunner"
+          Write-Host "set-output name=githubRunner::$githubRunner"
 
       - name: Projects
         id: Projects
@@ -84,7 +84,7 @@ jobs:
             "Accept"        = "application/vnd.github.v3+json"
           }
           $url = "$($ENV:GITHUB_API_URL)/repos/$($ENV:GITHUB_REPOSITORY)/environments"
-          $environments = @((Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json).environments | ForEach-Object { $_.Name })
+          $environments = @((Invoke-WebRequest -UseBasicParsing -Headers $headers -Uri $url | ConvertFrom-Json).environments | Where-Object { $_.Name -notlike '* (Production)' } | ForEach-Object { $_.Name })
           if ($environments.Count -eq 1) {
             $environmentsJSon = "[$($environments | ConvertTo-Json -compress)]"
           }
@@ -97,7 +97,7 @@ jobs:
           Write-Host "set-output name=environmentCount::$($environments.Count)"
   Build:
     needs: [ Analyze ]
-    runs-on: ${{ needs.Analyze.outputs.githubRunner }}
+    runs-on: ${{ fromJson(needs.Analyze.outputs.githubRunner) }}
     strategy:
       matrix:
         project: ${{ fromJson(needs.Analyze.outputs.projects) }}
@@ -183,7 +183,7 @@ jobs:
         with:
           Project: ${{ matrix.project }}
   Deploy:
-    runs-on: windows-latest
+    runs-on: [ windows-latest ]
     needs: [ Analyze, Build ]
     if: ${{ needs.Analyze.outputs.environmentCount > 0 }}
     strategy:
@@ -194,15 +194,55 @@ jobs:
     environment:
       name: ${{ matrix.environment }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
           path: '${{ github.workspace }}\artifacts'
 
+      - name: EnvName
+        id: envName
+        run: |
+          $envName = '${{ matrix.environment }}'.split(' ')[0]
+          Write-Host "::set-output name=envName::$envName"
+
+      - name: Read settings
+        uses: freddydk/AL-Go-Actions/ReadSettings@main
+
+      - name: Read secrets
+        uses: freddydk/AL-Go-Actions/ReadSecrets@main
+        env:
+          secrets: ${{ toJson(secrets) }}
+        with:
+          settingsJson: ${{ env.Settings }}
+          secrets: '${{ steps.envName.outputs.envName }}-AuthContext,AuthContext'
+
+      - name: AuthContext
+        id: authContext
+        run: |
+          $authContext = [System.Environment]::GetEnvironmentVariable('${{ steps.envName.outputs.envName }}-AuthContext')
+          if ($authContext) {
+            Write-Host "Using ${{ steps.envName.outputs.envName }}-AuthContext secret"
+          }
+          else {
+            $authContext = [System.Environment]::GetEnvironmentVariable('AuthContext')
+            if ($authContext) {
+              Write-Host "Using AuthContext secret"
+            }
+            else {
+              Write-Host "::Error::No AuthContext provided"
+              exit 1
+            }
+          }
+          Write-Host "::set-output name=authContext::$authContext"
+          Write-Host "set-output name=authContext::$authContext"
+
       - name: Deploy
         uses: freddydk/AL-Go-Actions/Deploy@main
         env:
-          authContext: '${{ secrets.AuthContext }}'
+          authContext: '${{ steps.authContext.outputs.authContext }}'
         with:
           type: 'CD'
           projects: '${{ secrets.Projects }}'
