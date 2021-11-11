@@ -28,6 +28,7 @@ jobs:
         uses: freddydk/AL-Go-Actions/ReadSettings@main
         with:
           get: KeyVaultName,GhTokenWorkflowSecretName,TemplateUrl
+
       - name: Read secrets
         uses: freddydk/AL-Go-Actions/ReadSecrets@main
         env:
